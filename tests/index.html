@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Test WASM</title>
+		<link href="https://unpkg.com/modern-normalize" rel="stylesheet" />
+		<style>
+			code {
+				background-color: #eee;
+				display: inline-block;
+				padding: 1rem;
+			}
+		</style>
+		<script type="module">
+			import { addTwo } from './test.wasm';
+
+			document.querySelector('form').addEventListener('submit', (event) => {
+				event.preventDefault();
+
+				const formData = new FormData(event.target);
+
+				document.querySelector('code').innerHTML = addTwo(formData.get('augend'), formData.get('addend'));
+			});
+		</script>
+	</head>
+	<body>
+		<h1>Test WASM</h1>
+
+		<main>
+			<form action="">
+				<input type="number" name="augend" />
+				<input type="number" name="addend" />
+				<button type="submit">ADD</button>
+			</form>
+
+			<code></code>
+		</main>
+	</body>
+</html>
