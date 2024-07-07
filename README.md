@@ -10,11 +10,11 @@
 import offloadWasm from 'vite-plugin-offload-wasm';
 
 export default defineConfig({
-	plugins: [
-		offloadWasm({
-			'path.to.wasm': 'https://example.com/with/file.wasm',
-			'@another/test.wasm': 'https://unpkg.com/@another/test.wasm',
-		}),
-	],
+  plugins: [
+    offloadWasm({
+      'path.to.wasm': 'https://example.com/with/file.wasm',
+      '@another/test.wasm': 'https://unpkg.com/@another/test.wasm',
+    }),
+  ],
 });
 ```
