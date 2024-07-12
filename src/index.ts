@@ -2,6 +2,8 @@ import { extname, sep } from 'path';
 import type { Plugin } from 'vite';
 
 export default function offloadWasm(list: Record<string, string>): Plugin {
+	const storage: string[] = [];
+
 	function definedReplacement(id: string) {
 		const pathParts = id.split(sep);
 
@@ -20,7 +22,7 @@ export default function offloadWasm(list: Record<string, string>): Plugin {
 		const ASSET_PATTERN = /__VITE_ASSET__.*__/;
 
 		return {
-			pattern: new RegExp(moduleCode.replace('$', `\\$`).replace(ASSET_PATTERN, '[^\\;]+')),
+			pattern: new RegExp(moduleCode.replace('$', `\\$`).replace(ASSET_PATTERN, '(?<localpath>[^\\;]+)')),
 			replacement: moduleCode?.replace(ASSET_PATTERN, replacement),
 		};
 	}
@@ -56,10 +58,20 @@ export default function offloadWasm(list: Record<string, string>): Plugin {
 					return;
 				}
 
-				code = handleReplacements(code, replacerData(moduleCode, replacement));
+				const data = replacerData(moduleCode, replacement);
+
+				storage.push(code.match(data.pattern)?.groups?.localpath!);
+
+				code = handleReplacements(code, data);
 			});
 
 			return code;
+		},
+
+		generateBundle(_, bundle) {
+			storage.forEach((path) => {
+				delete bundle[path.replace('/', '')];
+			});
 		},
 	};
 }
