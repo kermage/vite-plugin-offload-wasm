@@ -1,7 +1,9 @@
 import { extname, sep } from 'path';
-import type { Plugin } from 'vite';
+
+import type { Plugin, ResolvedConfig } from 'vite';
 
 export default function offloadWasm(list: Record<string, string>): Plugin {
+	let resolvedConfig: ResolvedConfig;
 	const storage: string[] = [];
 
 	function definedReplacement(id: string) {
@@ -22,7 +24,9 @@ export default function offloadWasm(list: Record<string, string>): Plugin {
 		const ASSET_PATTERN = /__VITE_ASSET__.*__/;
 
 		return {
-			pattern: new RegExp(moduleCode.replace('$', `\\$`).replace(ASSET_PATTERN, '(?<localpath>[^\\;]+)')),
+			pattern: new RegExp(
+				moduleCode.replace('$', `\\$`).replace(ASSET_PATTERN, `${resolvedConfig.base}(?<localpath>[^\\;]+)`),
+			),
 			replacement: moduleCode?.replace(ASSET_PATTERN, replacement),
 		};
 	}
@@ -35,6 +39,10 @@ export default function offloadWasm(list: Record<string, string>): Plugin {
 		name: 'vite-plugin-offload-wasm',
 		enforce: 'post',
 		apply: 'build',
+
+		configResolved(config) {
+			resolvedConfig = config;
+		},
 
 		renderChunk(code, chunk) {
 			if ('object' !== typeof list || 0 === Object.values(list).length) {
@@ -70,7 +78,7 @@ export default function offloadWasm(list: Record<string, string>): Plugin {
 
 		generateBundle(_, bundle) {
 			storage.forEach((path) => {
-				delete bundle[path.replace('/', '')];
+				delete bundle[path];
 			});
 		},
 	};
