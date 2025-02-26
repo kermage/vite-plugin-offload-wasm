@@ -20,3 +20,7 @@ export default defineConfig({
   ],
 });
 ```
+
+### Optional Parameter
+
+Boolean setting to force replacement instead of inlining WASM code

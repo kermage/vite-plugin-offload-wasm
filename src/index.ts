@@ -2,7 +2,7 @@ import { extname, sep } from 'path';
 
 import type { Plugin, ResolvedConfig } from 'vite';
 
-export default function offloadWasm(list: Record<string, string>): Plugin {
+export default function offloadWasm(list: Record<string, string>, forced: boolean = false): Plugin {
 	let resolvedConfig: ResolvedConfig;
 	const storage: string[] = [];
 
@@ -69,6 +69,10 @@ export default function offloadWasm(list: Record<string, string>): Plugin {
 				const data = replacerData(moduleCode, replacement);
 
 				storage.push(code.match(data.pattern)?.groups?.localpath!);
+
+				if (forced) {
+					data.replacement = data.replacement.replace(/"data:application\/wasm;base64,[^\"]+"/, `"${replacement}"`);
+				}
 
 				code = handleReplacements(code, data);
 			});

@@ -11,6 +11,6 @@ export default defineConfig({
 		wasm(),
 		offloadWasm({
 			'tests/test.wasm': 'https://cdn.jsdelivr.net/gh/kermage/vite-plugin-offload-wasm/tests/test.wasm',
-		}),
+		}, true),
 	],
 });
