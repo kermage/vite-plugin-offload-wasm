@@ -9,8 +9,11 @@ export default defineConfig({
 	},
 	plugins: [
 		wasm(),
-		offloadWasm({
-			'tests/test.wasm': 'https://cdn.jsdelivr.net/gh/kermage/vite-plugin-offload-wasm/tests/test.wasm',
-		}, true),
+		offloadWasm(
+			{
+				'tests/test.wasm': 'https://cdn.jsdelivr.net/gh/kermage/vite-plugin-offload-wasm/tests/test.wasm',
+			},
+			true,
+		),
 	],
 });
