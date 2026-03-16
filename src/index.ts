@@ -68,7 +68,10 @@ export default function offloadWasm(list: Record<string, string>, forced: boolea
 
 				const data = replacerData(moduleCode, replacement);
 
-				storage.push(code.match(data.pattern)?.groups?.localpath!);
+				const match = code.match(data.pattern);
+				if (match?.groups?.localpath) {
+					storage.push(match.groups.localpath);
+				}
 
 				if (forced) {
 					data.replacement = data.replacement.replace(/"data:application\/wasm;base64,[^\"]+"/, `"${replacement}"`);
