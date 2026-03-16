@@ -22,10 +22,11 @@ export default function offloadWasm(list: Record<string, string>, forced: boolea
 
 	function replacerData(moduleCode: string, replacement: string) {
 		const ASSET_PATTERN = /__VITE_ASSET__.*__/;
+		const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 		return {
 			pattern: new RegExp(
-				moduleCode.replace('$', `\\$`).replace(ASSET_PATTERN, `${resolvedConfig.base}(?<localpath>[^\\;]+)`),
+				escapeRegex(moduleCode).replace(ASSET_PATTERN, `${resolvedConfig.base}(?<localpath>[^\\;]+)`),
 			),
 			replacement: moduleCode?.replace(ASSET_PATTERN, replacement),
 		};
